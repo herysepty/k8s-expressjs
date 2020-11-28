@@ -5,7 +5,6 @@ metadata:
   labels:
     name: expressjs-hs
 spec:
-  replicas: 3
   selector:
     matchLabels:
       name: expressjs-hs
@@ -35,3 +34,30 @@ spec:
     - port: 3000
       targetPort: 3000
       nodePort: 30001
+
+---
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-expressjs-hs
+spec:
+  minReplicas: 2
+  maxReplicas: 5
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: expressjs-hs
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 20
+    # - type: Resource
+    #   resource:
+    #     name: memory
+    #     target:
+    #       type: Utilization
+    #       averageUtilization: 20
