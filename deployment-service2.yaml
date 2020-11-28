@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expressjs-hs
+  labels:
+    name: expressjs-hs
+spec:
+  selector:
+    matchLabels:
+      name: expressjs-hs
+  template:
+    metadata:
+      name: expressjs-hs-service2
+      labels:
+        name: expressjs-hs
+    spec:
+      containers:
+        - name: expressjs-hs
+          image: herysepty/expressjs:v4
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: expressjs-service2
+spec:
+  type: NodePort
+  selector:
+    name: expressjs-hs
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30002
+
+---
+
+# apiVersion: autoscaling/v2beta2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: hpa-expressjs-hs
+# spec:
+#   minReplicas: 2
+#   maxReplicas: 5
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: expressjs-hs
+#   metrics:
+#     - type: Resource
+#       resource:
+#         name: cpu
+#         target:
+#           type: Utilization
+#           averageUtilization: 20
+    # - type: Resource
+    #   resource:
+    #     name: memory
+    #     target:
+    #       type: Utilization
+    #       averageUtilization: 20
